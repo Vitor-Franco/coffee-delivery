@@ -31,9 +31,25 @@ interface CartContextType {
 export const CartContext = createContext({} as CartContextType);
 
 export function CartContextProvider({ children }: ICartContextProvider) {
-  const [cartItemsState, dispatch] = useReducer(cartReducer, {
+  const initialCartItemsState = {
     items: [],
-  });
+  };
+
+  const [cartItemsState, dispatch] = useReducer(
+    cartReducer,
+    initialCartItemsState,
+    () => {
+      const storagedStateAsJson = localStorage.getItem(
+        '@coffee-delivery:coffes-items-cart-1.0.0'
+      );
+
+      if (storagedStateAsJson) {
+        return JSON.parse(storagedStateAsJson);
+      }
+
+      return initialCartItemsState;
+    }
+  );
 
   function removeToCart(id: number) {
     dispatch(removeCartItemAction(id));

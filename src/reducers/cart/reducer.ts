@@ -1,3 +1,4 @@
+import produce from 'immer';
 import { ActionTypes } from './actions';
 
 export interface CartItem {
@@ -17,85 +18,61 @@ interface IAction {
   type: ActionTypes;
 }
 
+function saveOnLocalStorageCart(state: CartItemsState) {
+  localStorage.setItem(
+    '@coffee-delivery:coffes-items-cart-1.0.0',
+    JSON.stringify(state)
+  );
+}
+
 export function cartReducer(state: CartItemsState, action: IAction) {
   switch (action.type) {
     case ActionTypes.ADD_NEW_OR_INCREMENT: {
-      const { newItem } = action.payload;
+      const stateHandled = produce(state, (draft) => {
+        const { newItem } = action.payload;
+        const itemExistsInCart = state.items.findIndex(
+          (item) => item.id === newItem.id
+        );
 
-      const itemExistsInCart = state.items.find(
-        (item) => item.id === newItem.id
-      );
+        if (itemExistsInCart >= 0) {
+          draft.items[itemExistsInCart].amount += 1;
+          return;
+        }
 
-      if (itemExistsInCart) {
-        const handledItems = state.items.map((item) => {
-          if (item.id === newItem.id) {
-            return {
-              ...item,
-              amount: item.amount + 1,
-            };
-          }
-
-          return item;
-        });
-
-        return {
-          ...state,
-          items: handledItems,
-        };
-      }
-
-      Object.assign(newItem, {
-        amount: 1,
+        draft.items.push({ ...newItem, amount: 1 });
       });
 
-      return {
-        ...state,
-        items: [...state.items, newItem],
-      };
+      saveOnLocalStorageCart(stateHandled);
+      return stateHandled;
     }
 
     case ActionTypes.DECREMENT_OR_REMOVE: {
-      const { id } = action.payload;
+      const stateHandled = produce(state, (draft) => {
+        const { id } = action.payload;
+        const coffeeActual = draft.items.findIndex((item) => item.id === id);
+        const hasValueToDecrement =
+          coffeeActual >= 0 && draft.items[coffeeActual].amount > 1;
 
-      const coffeeActual = state.items.find((item) => item.id === id);
+        if (hasValueToDecrement) {
+          draft.items[coffeeActual].amount -= 1;
+          return;
+        }
 
-      const hasValueToRemove = !!coffeeActual && coffeeActual.amount > 1;
-      if (hasValueToRemove) {
-        const decrementedItem = state.items.map((coffeeActual) => {
-          if (coffeeActual.id === id) {
-            return {
-              ...coffeeActual,
-              amount: coffeeActual.amount - 1,
-            };
-          }
+        draft.items = draft.items.filter((item) => item.id !== id);
+      });
 
-          return coffeeActual;
-        });
-
-        return {
-          ...state,
-          items: decrementedItem,
-        };
-      }
-
-      const cartItemsWithoutRemovedItem = state.items.filter(
-        (item) => item.id !== id
-      );
-
-      return {
-        ...state,
-        items: cartItemsWithoutRemovedItem,
-      };
+      saveOnLocalStorageCart(stateHandled);
+      return stateHandled;
     }
 
     case ActionTypes.REMOVE_ITEM: {
-      const { id } = action.payload;
-      const itemsHandled = state.items.filter((item) => item.id !== id);
+      const stateHandled = produce(state, (draft) => {
+        const { id } = action.payload;
+        draft.items = draft.items.filter((item) => item.id !== id);
+      });
 
-      return {
-        ...state,
-        items: itemsHandled,
-      };
+      saveOnLocalStorageCart(stateHandled);
+      return stateHandled;
     }
 
     default:
