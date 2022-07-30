@@ -17,6 +17,8 @@ export const defaultTheme = {
 
   dark: '#272221',
 
+  'red-400': '#E53E3E',
+
   'white-100': '#FFFFFF',
   'white-200': '#FAFAFA',
 };

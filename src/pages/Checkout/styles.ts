@@ -112,48 +112,6 @@ export const ButtonPayment = styled.button<IButtonPaymentProps>`
     `}
 `;
 
-export const Cep = styled.div`
-  grid-area: cep;
-`;
-
-export const Rua = styled.div`
-  grid-area: rua;
-`;
-
-export const Numero = styled.div`
-  grid-area: numero;
-`;
-
-export const Complemento = styled.div`
-  grid-area: complemento;
-`;
-
-export const Bairro = styled.div`
-  grid-area: bairro;
-`;
-
-export const Cidade = styled.div`
-  grid-area: cidade;
-`;
-
-export const UF = styled.div`
-  grid-area: uf;
-`;
-
-export const GridInputs = styled.div`
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr 17.25rem 3.75rem;
-  grid-template-areas:
-    'cep . .'
-    'rua rua rua'
-    'numero complemento complemento'
-    'bairro cidade uf';
-
-  input {
-    width: 100%;
-  }
-`;
 
 export const Resume = styled.div`
   width: 100%;

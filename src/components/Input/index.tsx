@@ -1,11 +1,15 @@
 import React, { InputHTMLAttributes } from 'react';
 import { Container, InputContainer } from './styles';
 
-interface IInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface IInputProps
+  extends React.DetailedHTMLProps<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   isOptional?: boolean;
 }
 
-const Input: React.FC<IInputProps> = React.forwardRef(
+const Input = React.forwardRef<HTMLInputElement, IInputProps>(
   ({ isOptional, ...rest }: IInputProps, ref) => {
     return (
       <Container>
