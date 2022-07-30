@@ -1,5 +1,5 @@
 import { Coffee, Package, ShoppingCart, Timer } from 'phosphor-react';
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   BannerContent,
   Highlights,
@@ -20,7 +20,6 @@ import {
 } from './styles';
 import BannerImage from '../../assets/banner.svg';
 import { CoffeeCard, CoffeeProps } from '../../components/CoffeeCard';
-import { CartContext } from '../../contexts/CartContexts';
 
 function Home() {
   const [coffees, setCoffees] = useState<CoffeeProps[]>([]);
