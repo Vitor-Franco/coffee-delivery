@@ -1,5 +1,4 @@
-import { Coffee, Package, ShoppingCart, Timer } from 'phosphor-react';
-import { useEffect, useState } from 'react';
+import { Coffee, Package, ShoppingCart, Timer } from "phosphor-react";
 import {
   BannerContent,
   Highlights,
@@ -17,26 +16,30 @@ import {
   Title,
   Content,
   ShoppingInfo,
-} from './styles';
-import BannerImage from '../../assets/banner.svg';
-import { CoffeeCard, CoffeeProps } from '../../components/CoffeeCard';
+} from "./styles";
+import BannerImage from "../../assets/banner.svg";
+import { CoffeeCard, CoffeeProps } from "../../components/CoffeeCard";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../../lib/axios";
 
 function Home() {
-  const [coffees, setCoffees] = useState<CoffeeProps[]>([]);
-
-  function loadCoffees() {
-    try {
-      fetch('http://localhost:3000/coffees/')
-        .then((response) => response.json())
-        .then((data) => setCoffees(data));
-    } catch {
-      console.log('Erro ao carregar os dados');
+  const {
+    data: coffees,
+    isFetching,
+    error,
+    isLoading,
+    isRefetching,
+    isStale,
+  } = useQuery<CoffeeProps[]>(
+    ["coffees"],
+    async () => {
+      const res = await api.get("/coffees/");
+      return res.data;
+    },
+    {
+      staleTime: 1000 * 5,
     }
-  }
-
-  useEffect(() => {
-    loadCoffees();
-  }, []);
+  );
 
   return (
     <div>
@@ -88,11 +91,55 @@ function Home() {
         <BannerImageBackground />
       </BannerBackground>
 
+      <>
+        {isFetching && (
+          <span
+            style={{
+              display: "block",
+              fontSize: 15,
+              color: "#333",
+              fontWeight: 600,
+            }}
+          >
+            fetching...
+          </span>
+        )}
+      </>
+      <>
+        {error && (
+          <span
+            style={{
+              display: "block",
+              fontSize: 15,
+              color: "#333",
+              fontWeight: 600,
+            }}
+          >
+            Erro ao carregar os dados
+          </span>
+        )}
+      </>
+
+      <>
+        {isLoading && (
+          <span
+            style={{
+              display: "block",
+              fontSize: 15,
+              color: "#333",
+              fontWeight: 600,
+            }}
+          >
+            Carregando...
+          </span>
+        )}
+      </>
+
       <Content>
         <Title>Nossos Cafés</Title>
 
         <ShoppingInfo>
-          {coffees.map((coffee) => (
+          {coffees?.map((coffee) => (
             <CoffeeCard key={coffee.id} {...coffee} />
           ))}
         </ShoppingInfo>

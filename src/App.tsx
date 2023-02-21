@@ -5,7 +5,8 @@ import { Routes } from './router/Routes';
 import { GlobalStyles } from './styles/global';
 import { defaultTheme } from './styles/themes/default';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from './services/queryClient';
+import { queryClient } from './lib/queryClient';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
 
         <GlobalStyles />
       </ThemeProvider>
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 }
